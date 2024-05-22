@@ -34,11 +34,11 @@ namespace MySite.Controllers
                     
                     if (alreadyExist == null ) //логика если неправильно
                     {
-                        
+                        return View("FailedLogin");
                     }
                     else  //если правильно
                     {
-                        
+                        return View("Profile"); 
                     }
                     
 
@@ -47,7 +47,7 @@ namespace MySite.Controllers
             }
             return View("Index");
         }
-        public IActionResult Register(Log log)
+        public IActionResult Registring(Log log)
         {
             if (ModelState.IsValid)
             {

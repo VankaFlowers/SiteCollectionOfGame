@@ -1,11 +1,11 @@
-@model Log
+﻿@model Log
 @{
     Layout = null;
 }
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
 <head>
-    <script src="~/css/assets/js/color-modes.js"></script>   
+    <script src="~/css/assets/js/color-modes.js"></script>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +18,7 @@
 
 
 
-    
+
 
     <link href="~/css/assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -31,7 +31,7 @@
             user-select: none;
         }
 
-       
+
 
         .b-example-divider {
             width: 100%;
@@ -154,7 +154,13 @@
 
     @* SIGN IN *@
     <main class="form-signin w-100 m-auto">
-        <form class="form-login" method="post" asp-contoller="Home" asp-action="Logging">
+        @* сообщения с ошибкой *@
+        <div class="form-floating">                    
+            <p class="error-message">
+                Неправильный логин или пароль
+            </p>
+        </div>
+        <form method="post" asp-contoller="Home" asp-action="Logging">
             <img class="mb-4" src="~/css/assets/brand/maxresdefault.svg" alt="" width="72" height="57">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
@@ -174,11 +180,10 @@
                 </label>
             </div>
             <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
-            
+
         </form>
-    
-        
-        <form class="form-logup" method="post" asp-contoller="Home" asp-action="Registring">
+
+        <form method="post" asp-contoller="Home" asp-action="Registring">
             
             <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
 
@@ -191,7 +196,7 @@
                 <label asp-for="Password">Password</label>
             </div>
 
-           
+
             <button class="btn btn-primary w-100 py-2" type="submit">Sign up</button>
             <p class="mt-5 mb-3 text-body-secondary">&copy; 2017–2024</p>
         </form>
