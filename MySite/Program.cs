@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using MySite.Entities;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MySite
@@ -10,6 +13,16 @@ namespace MySite
 
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => options.LoginPath = "/index");
+
+            builder.Services.AddAuthorization();
+
+            builder.Services.AddDbContext<DbVideoGamesContext>(options
+                => options.UseNpgsql("Server=localhost; DataBase=db_video_games; User Id=postgres;password = 1234"));
+
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
@@ -25,12 +38,14 @@ namespace MySite
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            
+
 
             app.Run();
             

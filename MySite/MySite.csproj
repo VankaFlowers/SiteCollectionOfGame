@@ -29,6 +29,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     <PackageReference Include="Npgsql.EntityFrameWorkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="RestSharp" Version="111.0.0" />
   </ItemGroup>
 
 </Project>
