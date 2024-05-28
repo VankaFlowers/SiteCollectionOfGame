@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MySite.Entities;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MySite.Migrations
 {
     [DbContext(typeof(DbVideoGamesContext))]
-    partial class DbVideoGamesContextModelSnapshot : ModelSnapshot
+    [Migration("20240524171719_TestMigration")]
+    partial class TestMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,48 +24,6 @@ namespace MySite.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("GamePerson", b =>
-                {
-                    b.Property<int>("GamesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PersonsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("GamesId", "PersonsId");
-
-                    b.HasIndex("PersonsId");
-
-                    b.ToTable("GamePerson", "video_games");
-                });
-
-            modelBuilder.Entity("MySite.Entities.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("game_comments", "video_games");
-                });
 
             modelBuilder.Entity("MySite.Entities.Game", b =>
                 {
@@ -182,6 +143,7 @@ namespace MySite.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("LoginName")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
@@ -189,12 +151,31 @@ namespace MySite.Migrations
                         .HasDefaultValueSql("NULL::character varying");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id")
                         .HasName("pk_person");
 
                     b.ToTable("person", "video_games");
+                });
+
+            modelBuilder.Entity("MySite.Entities.PersonsGame", b =>
+                {
+                    b.Property<int>("PersonsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GamesId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text");
+
+                    b.HasKey("PersonsId", "GamesId");
+
+                    b.HasIndex("GamesId");
+
+                    b.ToTable("persons_games", "video_games");
                 });
 
             modelBuilder.Entity("MySite.Entities.Platform", b =>
@@ -287,40 +268,6 @@ namespace MySite.Migrations
                     b.ToTable("region_sales", "video_games");
                 });
 
-            modelBuilder.Entity("GamePerson", b =>
-                {
-                    b.HasOne("MySite.Entities.Game", null)
-                        .WithMany()
-                        .HasForeignKey("GamesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MySite.Entities.Person", null)
-                        .WithMany()
-                        .HasForeignKey("PersonsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MySite.Entities.Comment", b =>
-                {
-                    b.HasOne("MySite.Entities.Game", "Game")
-                        .WithMany("Comments")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MySite.Entities.Person", "Person")
-                        .WithMany("Comments")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("Person");
-                });
-
             modelBuilder.Entity("MySite.Entities.Game", b =>
                 {
                     b.HasOne("MySite.Entities.Genre", "Genre")
@@ -365,6 +312,25 @@ namespace MySite.Migrations
                     b.Navigation("Publisher");
                 });
 
+            modelBuilder.Entity("MySite.Entities.PersonsGame", b =>
+                {
+                    b.HasOne("MySite.Entities.Game", "Game")
+                        .WithMany("PersonsGames")
+                        .HasForeignKey("GamesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MySite.Entities.Person", "Person")
+                        .WithMany("PersonsGames")
+                        .HasForeignKey("PersonsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("Person");
+                });
+
             modelBuilder.Entity("MySite.Entities.RegionSale", b =>
                 {
                     b.HasOne("MySite.Entities.GamePlatform", "GamePlatform")
@@ -384,9 +350,9 @@ namespace MySite.Migrations
 
             modelBuilder.Entity("MySite.Entities.Game", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("GamePublishers");
+
+                    b.Navigation("PersonsGames");
                 });
 
             modelBuilder.Entity("MySite.Entities.GamePublisher", b =>
@@ -401,7 +367,7 @@ namespace MySite.Migrations
 
             modelBuilder.Entity("MySite.Entities.Person", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("PersonsGames");
                 });
 
             modelBuilder.Entity("MySite.Entities.Platform", b =>

@@ -15,5 +15,7 @@ public partial class Game
 
     public virtual Genre? Genre { get; set; }
 
-    public ICollection<Person> Persons { get; set; }
+    public ICollection<Comment>? Comments{ get; set; }
+
+    public ICollection<Person>? Persons { get; set; }
 }

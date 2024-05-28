@@ -27,12 +27,15 @@ namespace MySite.Controllers
         {
             return View("GameSelection");
         }
+
+
         [HttpPost]
-        public IActionResult AddGame(GameOfPerson game) {
+        public IActionResult AddGame(GameOfPerson game)
+        {
             if (ModelState.IsValid)
             {
                 var existGame = _dbContext.Games
-                    .Where(g => g.GameName == game.NameOfGame )
+                    .Where(g => g.GameName == game.NameOfGame)
                     .FirstOrDefault();
                 if (existGame == null)
                 {
@@ -40,51 +43,77 @@ namespace MySite.Controllers
                 }
                 else
                 {
-                    if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey("login"))   //получаем из куки имя пользователя
+                    if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey("login"))   
                     {
-                        var nameOfPerson = _httpContextAccessor.HttpContext.Request.Cookies["login"];
+                        var nameOfPerson = _httpContextAccessor.HttpContext.Request.Cookies["login"];   //получаем из куки имя пользователя
 
-                        var user = _dbContext 
-                            .Persons
-                            .Include(e => e.Games)
-                            .Where(p => p.LoginName == nameOfPerson)
-                            .FirstOrDefault();
 
-                        var alreadyAddedGames = user.Games;
-                        
-                        
+                        var user = _dbContext
+                        .Persons
+                        .Include(e => e.Games)
+                        .ThenInclude(e => e.Comments)
+                        .Include(e => e.Comments)
+                        .First(p => p.LoginName == nameOfPerson);
+
+                        var alreadyAddedGames = user.Games; //уже добавленные игры пользователя   
+
+
                         if (alreadyAddedGames == null)
                         {
-                            //alreadyAddedGames = new List<Game>() { existGame };
-                            user.Games = new List<Game>() { existGame };
-                            //_dbContext.Update(user);
+                            user.Games = new List<Game>() { existGame };    //если игр еще не было,для инициалазции                            
+
+                            user.Comments = new List<Comment>();
+
+                            var comment = new Comment() { Text = string.Empty, Game = existGame, Person = user };
+
+                            if (game.Comment != null)
+                            {
+                                comment.Text = game.Comment;
+                            }                            
+
+                            user.Comments.Add(comment);            
+                            
                             _dbContext.SaveChanges();
+
                             return View("SuccessGameSelection");
                         }
-                        else if (alreadyAddedGames.Contains(existGame) == true  )       //если игра уже в списке пользователя
+                        else if (alreadyAddedGames.Contains(existGame) )    //если игра уже в списке пользователя
                         {
+                            var comment = new Comment() { Text = game.Comment };
+
+                            user.Comments = new List<Comment>() { comment };
+
+                            _dbContext.SaveChanges();
                             return View("SuccessGameSelection");
                         }
                         else
-                        {
-                            //alreadyAddedGames.Add(existGame);
+                        {//здесь поправить null ex
                             user.Games.Add(existGame);
-                            //_dbContext.Update(user);
+
+                            var comment = new Comment() { Text = string.Empty, Game = existGame, Person = user };
+
+                            if (game.Comment != null)
+                            {
+                                comment.Text = game.Comment;
+                            }
+
+                            user.Comments.Add(comment);
+                            
                             _dbContext.SaveChanges();
                         }
-                        
+
                     }
                     else return View("Index");  //если нет куки
-                    
-                    return View("SuccessGameSelection");                 
+
+                    return View("SuccessGameSelection");
                 }
             }
-            
+
             return View("FailedGameSelection");
         }
-        
-        
+
+
     }
 
-       
+
 }

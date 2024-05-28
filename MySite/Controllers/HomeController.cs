@@ -23,7 +23,7 @@ namespace MySite.Controllers
             _logger = logger;
             _dbContext = context;
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -37,7 +37,7 @@ namespace MySite.Controllers
             return RedirectToRoute(new { controller = "Library", action = "ShowGames" });
         }
         [HttpPost]
-        
+
         public IActionResult Logging(Log log)
         {
             if (ModelState.IsValid)

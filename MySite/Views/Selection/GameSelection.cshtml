@@ -159,12 +159,16 @@
             <h1 class="h3 mb-3 fw-normal">Please select the game</h1>
 
             <div class="form-floating">
-                <input asp-for="NameOfGame" class="form-control" id="Email" placeholder="Name of the game">
+                <input asp-for="NameOfGame" class="form-control" id="NameGame" placeholder="Name of the game">
                 <label asp-for="NameOfGame">Game</label>
+            </div>
+            <div class="form-floating">
+                <textarea asp-for="Comment" class="form-control" id="Comment" placeholder="Comment"> </textarea>
+                <label asp-for="Comment">Comment</label>
             </div>
 
             
-            <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+            <button class="btn btn-primary w-100 py-2" type="submit">Please add the game</button>
 
         </form>        
     </main>

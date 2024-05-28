@@ -133,32 +133,7 @@ namespace MySite.Migrations
                         principalColumn: "id");
                 });
 
-            migrationBuilder.CreateTable(
-                name: "persons_games",
-                schema: "video_games",
-                columns: table => new
-                {
-                    GamesId = table.Column<int>(type: "integer", nullable: false),
-                    PersonsId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_persons_games", x => new { x.GamesId, x.PersonsId });
-                    table.ForeignKey(
-                        name: "FK_persons_games_game_GamesId",
-                        column: x => x.GamesId,
-                        principalSchema: "video_games",
-                        principalTable: "game",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_persons_games_person_PersonsId",
-                        column: x => x.PersonsId,
-                        principalSchema: "video_games",
-                        principalTable: "person",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            
 
             migrationBuilder.CreateTable(
                 name: "game_platform",
@@ -243,11 +218,7 @@ namespace MySite.Migrations
                 table: "game_publisher",
                 column: "publisher_id");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_persons_games_PersonsId",
-                schema: "video_games",
-                table: "persons_games",
-                column: "PersonsId");
+            
 
             migrationBuilder.CreateIndex(
                 name: "IX_region_sales_game_platform_id",
@@ -265,9 +236,7 @@ namespace MySite.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "persons_games",
-                schema: "video_games");
+            
 
             migrationBuilder.DropTable(
                 name: "region_sales",
