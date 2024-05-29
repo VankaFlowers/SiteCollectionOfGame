@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Security.Claims;
 using RestSharp;
 using MySite.Entities;
+using System;
+using Microsoft.AspNetCore.Http;
 
 
 
@@ -17,12 +19,14 @@ namespace MySite.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly DbVideoGamesContext _dbContext;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HomeController(ILogger<HomeController> logger, DbVideoGamesContext context)
+		public HomeController(ILogger<HomeController> logger, DbVideoGamesContext context, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _dbContext = context;
-        }
+			_httpContextAccessor = httpContextAccessor;
+		}
 
         public IActionResult Index()
         {
@@ -42,20 +46,25 @@ namespace MySite.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                var alreadyExist = _dbContext.Persons
+				var alreadyExist = _dbContext.Persons
                     .Where(p =>
                     (p.LoginName == log.Email && p.Password == log.Password) ? true : false) //запрос на корректность логина и пароля
                     .FirstOrDefault();
 
-                if (alreadyExist == null) //логика если неправильно
+				
+
+				if (alreadyExist == null) //логика если неправильно
                 {
                     return View("FailedLogin");
                 }
                 else  //если правильно
                 {
-                    Response.Cookies.Append("login", log.Email.ToString()); //записываем куки,лучше сделать через хэширование
-                    return View("Profile");
+					var claims = new List<Claim> { new Claim(ClaimTypes.Name, alreadyExist.LoginName) };
+
+					ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+					// установка аутентификационных куки
+					_httpContextAccessor.HttpContext?.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+					return View("Profile");
                 }
 
                 return Redirect("/"); //возвращает на главную страницу 

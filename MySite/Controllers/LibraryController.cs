@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MySite.Entities;
 using MySite.Models;
+using MySite.Services.ServicesForLibrary;
 using System;
 
 namespace MySite.Controllers
 {
-    public class LibraryController : Controller
+	[Authorize]
+	public class LibraryController : Controller
     {
         private readonly DbVideoGamesContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -16,39 +19,15 @@ namespace MySite.Controllers
             _httpContextAccessor = httpContextAccessor;
 
         }
+
         public IActionResult ShowGames()
         {
-            if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey("login"))
-            {
-                var nameOfPersonFromCoockie = _httpContextAccessor.HttpContext.Request.Cookies["login"];
-
-                var person = _dbContext
-                    .Persons
-                    .Include(e => e.Games)
-                    .ThenInclude(e => e.Genre)
-                    .Include(e => e.Comments)
-                    .First(p => p.LoginName == nameOfPersonFromCoockie);
+			if (User.Identity.IsAuthenticated)
+			{
+                
+                var gameListModel = LibraryService.CreationModel(_dbContext, _httpContextAccessor);
 
 
-
-                List<GamesOfUser> gamesOfPersonToModel = new List<GamesOfUser>(); //создание списка моделей
-
-                foreach (var game in person.Games)
-                {
-                    var comment = game?.Comments?.First(e => e.Person == person);
-
-                    if (comment != null)
-                    {
-                        gamesOfPersonToModel.Add(new GamesOfUser { Game = game.GameName, Comment = comment.Text, CommentId = comment.Id });
-                    }
-                    else    //если комментария не было
-                    {
-                        gamesOfPersonToModel.Add(new GamesOfUser { Game = game.GameName, Comment = string.Empty, CommentId = 0 });
-                    }
-
-
-                }
-                GameListModel gameListModel = new GameListModel() { GamesOfUsers = gamesOfPersonToModel };
                 return View("LibraryHome", gameListModel);
             }
             else
@@ -60,42 +39,11 @@ namespace MySite.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey("login"))
-                {
-                    var nameOfPerson = _httpContextAccessor.HttpContext.Request.Cookies["login"];
+				if (User.Identity.IsAuthenticated)
+				{
+                    var gameListModel = LibraryService.CreationModel(_dbContext, _httpContextAccessor,game);
 
-                    var user = _dbContext
-                        .Persons
-                        .Include(e => e.Games)
-                        .ThenInclude(e => e.Comments)
-                        .Include(e => e.Comments)
-                        .First(p => p.LoginName == nameOfPerson);
-
-                    user.Comments
-                        .First(e => e.Id == game.CommentId)
-                        .Text = game.Comment;
-
-                    _dbContext.SaveChanges();
-
-					List<GamesOfUser> gamesOfPersonToModel = new List<GamesOfUser>(); //создание списка моделей
-
-					foreach (var gameOfUser in user.Games)
-					{
-						var comment = gameOfUser?.Comments?.First(e => e.Person == user);
-
-						if (comment != null)
-						{
-							gamesOfPersonToModel.Add(new GamesOfUser { Game = gameOfUser.GameName, Comment = comment.Text, CommentId = comment.Id });
-						}
-						else    //если комментария не было
-						{
-							gamesOfPersonToModel.Add(new GamesOfUser { Game = gameOfUser.GameName, Comment = string.Empty, CommentId = 0 });
-						}
-
-
-					}
-					GameListModel gameListModel = new GameListModel() { GamesOfUsers = gamesOfPersonToModel };
-					return View("LibraryHome", gameListModel);
+                    return View("LibraryHome", gameListModel);
 				}
                 else return View("Index");
             }

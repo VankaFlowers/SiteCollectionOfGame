@@ -1,8 +1,6 @@
 ﻿@using MySite.Models
 @model GameListModel
-@{
-	Layout = null;
-}
+
 
 
 <!doctype html>
@@ -174,7 +172,7 @@
 
 
 
-	<div class="b-example-divider"></div>
+	@* <div class="b-example-divider"></div> *@
 
 	<table class="table">
 		@foreach (GamesOfUser p in Model.GamesOfUsers)
