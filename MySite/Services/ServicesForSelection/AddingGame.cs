@@ -4,9 +4,9 @@ using MySite.Models;
 
 namespace MySite.Services.ServicesForSelection
 {
-	public class AddingGame
-	{
-		static public string AlreadyThere(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext)
+	public class AddingGame : IAddingGameService
+    {
+		  public string AlreadyThere(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext)
 		{
 			
 			//var comment = new Comment() { Text = game.Comment };
@@ -14,7 +14,7 @@ namespace MySite.Services.ServicesForSelection
 			//_dbContext.SaveChanges();
 			return "SuccessGameSelection";
 		}
-		static public string RegularAdding(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext, Game? existGame)
+		 public string RegularAdding(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext, Game? existGame)
 		{
 			user.Games.Add(existGame);
 
@@ -30,7 +30,7 @@ namespace MySite.Services.ServicesForSelection
 			_dbContext.SaveChanges();
 			return "SuccessGameSelection";
 		}
-		static public string FirstInit(Person? user,Game existGame, GameOfPerson game, DbVideoGamesContext _dbContext)
+		 public string FirstInit(Person? user,Game existGame, GameOfPerson game, DbVideoGamesContext _dbContext)
 		{
 			user.Games = new List<Game>() { existGame };    //если игр еще не было,для инициалазции                            
 
@@ -49,7 +49,7 @@ namespace MySite.Services.ServicesForSelection
 
 			return "SuccessGameSelection";
 		}
-		 public string AddingTheGame(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GameOfPerson game)
+		   public string AddingTheGame(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GameOfPerson game)	//общий метод
 		{
 
 			var userContext = _httpContextAccessor.HttpContext.User;
@@ -80,10 +80,10 @@ namespace MySite.Services.ServicesForSelection
 			}
 			else if (alreadyAddedGames.Contains(existGame))    //если игра уже в списке пользователя
 			{				
-				return AlreadyThere(user,game, _dbContext);
+				return AlreadyThere(user,game,_dbContext);
 			}
 			else
-			{//здесь поправить null ex
+			{
 				return RegularAdding(user, game, _dbContext,existGame);
 			}
 		}

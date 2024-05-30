@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MySite.Entities;
 using MySite.Models;
+using MySite.Services;
 using MySite.Services.ServicesForSelection;
+
 
 namespace MySite.Controllers
 {
@@ -18,13 +20,15 @@ namespace MySite.Controllers
 	{
 		private readonly DbVideoGamesContext _dbContext;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IServiceProvider _serviceProvider;
 
-		public SelectionController(DbVideoGamesContext context, IHttpContextAccessor httpContextAccessor)
+        public SelectionController(DbVideoGamesContext context, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
 		{
 			_dbContext = context;
 			_httpContextAccessor = httpContextAccessor;
-			//_httpContext = httpContext;
-		}
+            _serviceProvider = serviceProvider;
+            //_httpContext = httpContext;
+        }
 		[HttpGet]
 		public IActionResult GameSelection()
 		{
@@ -39,13 +43,13 @@ namespace MySite.Controllers
 			{
 				if (User.Identity.IsAuthenticated)
 				{
-					var nameOfPerson = User.Identity.Name; //_httpContextAccessor.HttpContext.Request.Cookies["login"];   //получаем из куки имя пользователя
+					var nameOfPerson = User.Identity.Name; 
 
-					AddingGame adding = new AddingGame();
+					var service = _serviceProvider.GetService<IAddingGameService>();
 
-					string nameOfView = adding.AddingTheGame(_dbContext, _httpContextAccessor, game);
+					var nameOfView = service.AddingTheGame(_dbContext, _httpContextAccessor, game);          
 
-					return View(nameOfView);
+                    return View(nameOfView);
 				}
 				else return View("Index");  //если нет куки
 

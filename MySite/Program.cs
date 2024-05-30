@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MySite.Entities;
+using MySite.Services;
+using MySite.Services.ServicesForEditing;
+using MySite.Services.ServicesForHome;
+using MySite.Services.ServicesForLibrary;
+using MySite.Services.ServicesForSelection;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MySite
@@ -23,6 +28,11 @@ namespace MySite
                 => options.UseNpgsql("Server=localhost; DataBase=db_video_games; User Id=postgres;password = 1234"));
 
             builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddTransient<IAddingGameService, AddingGame>();
+            builder.Services.AddTransient<ILibraryService, LibraryService>();
+            builder.Services.AddTransient<IHomeService, HomeService>();
+            builder.Services.AddTransient<IEditingService,EditingService>();
 
             var app = builder.Build();
 

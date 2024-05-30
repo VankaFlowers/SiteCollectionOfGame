@@ -4,9 +4,9 @@ using MySite.Models;
 
 namespace MySite.Services.ServicesForLibrary
 {
-    public class LibraryService
+    public class LibraryService : ILibraryService
     {
-        static public GameListModel CreationModel( DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GamesOfUser game = null)
+         public GameListModel CreationModel( DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GamesOfUser game = null)
         {
             var claimsOfUser = _httpContextAccessor.HttpContext.User;
 
@@ -14,6 +14,7 @@ namespace MySite.Services.ServicesForLibrary
 
             var user = _dbContext
                 .Persons
+                .AsQueryable()
                 ?.Include(e => e.Games)
                 .ThenInclude(e => e.Comments)
                 .Include(e => e.Comments)
@@ -43,7 +44,7 @@ namespace MySite.Services.ServicesForLibrary
         }
 
 
-        static private void EditComment(Person? user,GamesOfUser game, DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor)
+          public void EditComment(Person? user,GamesOfUser game, DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor)
         {
             if (game.Comment == null)  //если пользватель удалил комментарий
             {

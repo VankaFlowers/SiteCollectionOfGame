@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MySite.Entities;
 using MySite.Models;
+using MySite.Services;
 
 namespace MySite.Controllers
 {
@@ -10,10 +11,12 @@ namespace MySite.Controllers
     {
         private readonly DbVideoGamesContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public EditCommentController(DbVideoGamesContext context, IHttpContextAccessor httpContextAccessor)
+        private readonly IServiceProvider _serviceProvider;
+        public EditCommentController(DbVideoGamesContext context, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
         {
             _dbContext = context;
             _httpContextAccessor = httpContextAccessor;
+            _serviceProvider = serviceProvider;
         }
         public IActionResult EditComment(GamesOfUser game)
         {
@@ -21,24 +24,9 @@ namespace MySite.Controllers
             {
 				if (User.Identity.IsAuthenticated)
 				{
+                    var service = _serviceProvider.GetRequiredService<IEditingService>();
 
-					var nameOfPerson = User.Identity.Name;
-
-					var user = _dbContext
-                        .Persons
-                        .Include(e => e.Games)
-                        .ThenInclude(e => e.Comments)
-                        .Include(e => e.Comments)
-                        .First(p => p.LoginName == nameOfPerson);
-                    if (game.Comment == null)
-                    {
-                        game.Comment = string.Empty;
-                    }
-                    user.Comments
-                        .First(e => e.Id==game.CommentId) 
-                        .Text = game.Comment;
-
-                    _dbContext.SaveChanges();
+                    service.EditComment(_dbContext, _httpContextAccessor, game);
 
                     return View("LibraryHome"); 
                 }
