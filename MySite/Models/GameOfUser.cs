@@ -1,6 +1,6 @@
 ﻿namespace MySite.Models
 {
-    public class GamesOfUser
+    public class GameOfUser
     {
         public string? Game { get; set; }
 

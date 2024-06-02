@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MySite.Entities;
@@ -38,7 +39,7 @@ namespace MySite.Controllers
                 return View("Index");
             }
         }
-        public IActionResult EditComment(GamesOfUser game)
+        public IActionResult EditComment(GameOfUser game)
         {
             if (ModelState.IsValid)
             {
@@ -50,6 +51,24 @@ namespace MySite.Controllers
 
                     return View("LibraryHome", gameListModel);
 				}
+                else return View("Index");
+            }
+            else
+            {
+                return View("Index");
+            }
+        }
+        public IActionResult DescriptionGame(string gameName)
+        {
+            if (ModelState.IsValid)
+            {
+                if (User.Identity.IsAuthenticated)
+                {
+                    var libserv = new LibraryService();
+
+                    return View(libserv.ShowDescriptionGame(_dbContext, _httpContextAccessor, gameName));
+
+                }
                 else return View("Index");
             }
             else

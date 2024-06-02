@@ -18,7 +18,7 @@ namespace MySite.Controllers
             _httpContextAccessor = httpContextAccessor;
             _serviceProvider = serviceProvider;
         }
-        public IActionResult EditComment(GamesOfUser game)
+        public IActionResult EditComment(GameOfUser game)
         {
             if (ModelState.IsValid)
             {

@@ -57,6 +57,32 @@ namespace MySite.Controllers
 
 			return View("FailedGameSelection");
 		}
+		public IActionResult SearchGames(string term)
+		{
+           if (ModelState.IsValid)
+            {
+                if (User.Identity.IsAuthenticated)
+                {
+                    var nameOfPerson = User.Identity.Name;
+
+					var name = term;
+
+					var games = _dbContext
+				  .Games
+				  .Where(g => g.GameName.ToLower().Contains(name.ToLower()))
+				  .Take(8)
+				  .Select(g => new { id = g.Id, text = g.GameName })
+				  .ToList();
+
+					
+
+					return Json(games);
+                }
+                else return View("Index");  
+
+            }
+            else return View("Index");
+        }
 
 
 	}

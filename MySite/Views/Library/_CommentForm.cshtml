@@ -1,0 +1,16 @@
+﻿@model GameOfUser
+
+<td style="width: 150px;">
+    <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Library" asp-action="DescriptionGame" asp-route-gameName="@Model.Game">
+        @Model.Game
+      </a>
+    <div class="alert alert-success update-alert" role="alert" style="display: none;">
+        Comment was updated!
+    </div>
+</td>
+<td>
+    <form asp-controller="Library" asp-action="EditComment">
+        <input type="hidden" name="CommentId" value="@Model.CommentId" />
+        <textarea class="comment" type="text" name="Comment" data-id="@Model.CommentId">@Model.Comment</textarea>
+    </form>
+</td>

@@ -4,8 +4,8 @@ namespace MySite.Models
 {
 	public class GameListModel 
 	{
-		public IEnumerable<GamesOfUser>? GamesOfUsers { get; set; }
+		public IEnumerable<GameOfUser>? GamesOfUsers { get; set; }
 
-		public GamesOfUser? GamesOfUser { get; set; }
+		public GameOfUser? GamesOfUser { get; set; }
 	}
 }

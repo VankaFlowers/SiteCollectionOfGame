@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using MySite.Entities;
 using MySite.Models;
 
@@ -87,5 +89,23 @@ namespace MySite.Services.ServicesForSelection
 				return RegularAdding(user, game, _dbContext,existGame);
 			}
 		}
+		//public GameOfPerson GetGames(DbVideoGamesContext _dbContext,GameOfPerson game)
+		//{
+		//	var name = game.NameOfGame;			
+
+  //          var games = _dbContext
+		//		.Games
+		//		.Where(g => g.GameName.ToLower()
+  //                            .Contains(name.ToLower()))
+		//		.Take(8)
+		//		.Select(g => new {id = g.Id, text =g.GameName})
+		//		.ToList();
+
+		//	var model = new GameOfPerson 
+		//	{ 
+		//		Games = new SelectList(games, "Value", "Text")
+		//	};
+		//	return model;
+		//}
 	}
 }

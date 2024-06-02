@@ -193,22 +193,10 @@
 	@* <div class="b-example-divider"></div> *@
 
 	<table class="table">
-		@foreach (GamesOfUser p in Model.GamesOfUsers)
+		@foreach (GameOfUser game in Model.GamesOfUsers)
 		{
 			<tr>
-				<td style="width: 150 px;">
-					@p.Game
-					<div class="alert alert-success update-alert" role="alert" style="display: none;">
-						Comment was updated!
-					</div>
-				</td>
-				<td>
-					<form asp-controller="Library" asp-action="EditComment">
-						<input type="hidden" name="CommentId" value="@p.CommentId" />
-						<textarea class="comment" type="text" name="Comment" data-id="@p.CommentId">@p.Comment </textarea>
-						@* <button class="btn btn-primary w-100 py-2" type="submit">Save</button> *@
-					</form>
-				</td>
+				@await Html.PartialAsync("_CommentForm", game)
 			</tr>
 		}
 	</table>
@@ -220,26 +208,35 @@
 				this.style.height = 'auto';
 				this.style.height = (this.scrollHeight) + 'px';
 			}).blur(function () {
-				var commentId = $(this).data('id');
-				var commentText = $(this).val();
-				var updateAlert = $(this).closest('td').prev().find('.update-alert');
-
-				$.ajax({
-					url: '/Library/EditComment',
-					type: 'POST',
-					data: {
-						CommentId: commentId,
-						Comment: commentText
-					},
-					success: function (response) {
-						updateAlert.fadeIn().delay(2000).fadeOut();
-					},
-					error: function (xhr, status, error) {
-						console.error('Failed to update comment');
-					}
-				});
+				updateComment($(this));
+			}).keypress(function (e) {
+				if (e.which == 13 && !e.shiftKey) {  // Enter key pressed
+					e.preventDefault();
+					$(this).blur();  // Trigger blur event to update comment
+				}
 			});
 		});
+
+		function updateComment(textarea) {
+			var commentId = textarea.data('id');
+			var commentText = textarea.val();
+			var updateAlert = textarea.closest('td').prev().find('.update-alert');
+
+			$.ajax({
+				url: '/Library/EditComment',
+				type: 'POST',
+				data: {
+					CommentId: commentId,
+					Comment: commentText
+				},
+				success: function (response) {
+					updateAlert.fadeIn().delay(2000).fadeOut();
+				},
+				error: function (xhr, status, error) {
+					console.error('Failed to update comment');
+				}
+			});
+		}
 	</script>
 	<div class="b-example-divider"></div>
 

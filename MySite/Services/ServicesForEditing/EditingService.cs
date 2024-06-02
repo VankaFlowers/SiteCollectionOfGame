@@ -6,7 +6,7 @@ namespace MySite.Services.ServicesForEditing
 {
     public class EditingService : IEditingService
     {
-        public void EditComment(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GamesOfUser game)
+        public void EditComment(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GameOfUser game)
         {
             var claimsOfUser = _httpContextAccessor.HttpContext.User;
 

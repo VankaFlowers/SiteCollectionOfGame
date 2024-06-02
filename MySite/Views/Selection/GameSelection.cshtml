@@ -92,6 +92,30 @@
             .bd-mode-toggle .dropdown-menu .active .bi {
                 display: block !important;
             }
+
+        .suggestions-list {
+            background-color: #1e1e1e; /* Тёмный фон */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px; /* Ограничение высоты */
+            overflow-y: auto; /* Прокрутка по вертикали */
+            margin-top: 5px;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        /* Стиль для каждого элемента списка */
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            color: #fff; /* Белый текст */
+        }
+
+            /* Стиль при наведении на элемент списка */
+            .suggestion-item:hover {
+                background-color: #444; /* Более тёмный фон при наведении */
+                color: #fff; /* Цвет текста не изменяется */
+            }
     </style>
 
 
@@ -157,19 +181,73 @@
             <h1 class="h3 mb-3 fw-normal">Please select the game</h1>
 
             <div class="form-floating">
-                <input asp-for="NameOfGame" class="form-control" id="NameGame" placeholder="Name of the game">
-                <label asp-for="NameOfGame">Game</label>
+                <input asp-for="NameOfGame" class="form-control" id="game-search" placeholder="Search for a game">
+                <input type="hidden" asp-for="SelectedGameId" id="selected-game-id" />
+                <label asp-for="SelectedGameId">Game</label>
             </div>
             <div class="form-floating">
                 <textarea asp-for="Comment" class="form-control" id="Comment" placeholder="Comment"> </textarea>
                 <label asp-for="Comment">Comment</label>
             </div>
+            <div id="suggestions" class="suggestions-list"></div>
 
             
             <button class="btn btn-primary w-100 py-2" type="submit">Please add the game</button>
 
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    var debounceTimeout;
+
+                    $('#game-search').on('input', function () {
+                        var searchTerm = $(this).val();
+
+                        clearTimeout(debounceTimeout);
+                        debounceTimeout = setTimeout(function () {
+                            if (searchTerm.length >= 2) {
+                                $.ajax({
+                                    url: '/Selection/SearchGames',
+                                    type: 'GET',
+                                    data: { term: searchTerm },
+                                    success: function (data) {
+                                        if (data && data.length > 0) {
+                                            var suggestions = data.map(function (game) {
+                                                return '<div class="suggestion-item" data-id="' + game.id + '">' + game.text + '</div>';
+                                            }).join('');
+                                            $('#suggestions').html(suggestions).show();
+                                        } else {
+                                            $('#suggestions').html('<div class="suggestion-item">No search results.</div>').show();
+                                        }
+                                    }
+                                });
+                            } else {
+                                $('#suggestions').hide();
+                            }
+                        }, 300); // Задержка 300 мс
+                    });
+
+                    $(document).on('click', '.suggestion-item', function () {
+                        var gameName = $(this).text();
+                        var gameId = $(this).data('id');
+
+                        $('#game-search').val(gameName);
+                        $('input[name="SelectedGameId"]').val(gameId);
+                        $('#suggestions').hide();
+                    });
+
+                    $(document).click(function (e) {
+                        if (!$(e.target).closest('#suggestions, #game-search').length) {
+                            $('#suggestions').hide();
+                        }
+                    });
+                });
+            </script>
         </form>        
     </main>
+    
+        
+    
     <script src="~/css/assets/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
