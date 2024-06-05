@@ -27,7 +27,7 @@ namespace MySite.Controllers
 			_dbContext = context;
 			_httpContextAccessor = httpContextAccessor;
             _serviceProvider = serviceProvider;
-            //_httpContext = httpContext;
+            
         }
 		[HttpGet]
 		public IActionResult GameSelection()

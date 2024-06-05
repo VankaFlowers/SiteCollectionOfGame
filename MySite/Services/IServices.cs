@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using MySite.Entities;
 using MySite.Models;
+using MySite.Models.GameDescription;
 
 namespace MySite.Services
 {
@@ -15,8 +16,11 @@ namespace MySite.Services
     interface ILibraryService
     {
         GameListModel CreationModel(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GameOfUser game = null);
-        void EditComment(Person? user, GameOfUser game, DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor);        
-    }
+        void EditComment(Person? user, GameOfUser game, DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor);
+
+        public GameDescriptionModel ShowDescriptionGame(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, string gameName);
+
+	}
     interface IHomeService
     {
         string Registring(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, Log log);

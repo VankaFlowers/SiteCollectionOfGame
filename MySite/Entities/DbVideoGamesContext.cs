@@ -37,6 +37,7 @@ public partial class DbVideoGamesContext : DbContext
     public DbSet<Person> Persons { get; set; }
 
     public virtual DbSet<Comment> Comments{ get; set; }
+    public DbSet<UserGameList> UserGamesList { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -49,6 +50,7 @@ public partial class DbVideoGamesContext : DbContext
             entity.HasKey(e => e.Id).HasName("pk_person");
             entity.ToTable("person", "video_games"); //здесь создать схему для людей отдельно
             entity.Property(e => e.Id).HasColumnName("id");
+
             entity.Property(e => e.LoginName).HasColumnName("login_name")
             .HasMaxLength(200)
             .HasDefaultValueSql("NULL::character varying")
@@ -64,6 +66,7 @@ public partial class DbVideoGamesContext : DbContext
             entity.ToTable("game", "video_games");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.GameName)
                 .HasMaxLength(200)
                 .HasDefaultValueSql("NULL::character varying")
@@ -192,6 +195,10 @@ public partial class DbVideoGamesContext : DbContext
         {
             entity.ToTable("game_comments","video_games");
 
+        });
+        modelBuilder.Entity<UserGameList>(entity =>
+        {
+            entity.ToTable("user_game_list", "video_games");
         });
 
 

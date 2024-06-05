@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MySite.Entities;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MySite.Migrations
 {
     [DbContext(typeof(DbVideoGamesContext))]
-    partial class DbVideoGamesContextModelSnapshot : ModelSnapshot
+    [Migration("20240603153718_AddUserGameListTable")]
+    partial class AddUserGameListTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,9 +204,6 @@ namespace MySite.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("text");
-
                     b.HasKey("Id")
                         .HasName("pk_person");
 
@@ -308,9 +308,6 @@ namespace MySite.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Game")
-                        .HasColumnType("text");
-
                     b.Property<int?>("PersonId")
                         .HasColumnType("integer");
 
@@ -321,7 +318,7 @@ namespace MySite.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("user_game_list", "video_games");
+                    b.ToTable("UserGamesList");
                 });
 
             modelBuilder.Entity("GamePerson", b =>

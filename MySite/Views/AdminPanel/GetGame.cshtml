@@ -1,0 +1,38 @@
+﻿@{
+    Layout = null;
+}
+
+@model AdminEditModel
+
+@{
+    ViewData["Title"] = "Find Game";
+}
+
+<h2>Find Game</h2>
+
+<form asp-action="GetGame" method="post">
+    <div class="form-group">
+        <label asp-for="GameName"></label>
+        <input asp-for="GameName" class="form-control" />
+        <span asp-validation-for="GameName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+
+    @if(Model?.Games!= null)
+    {
+<table class="table">
+    @foreach (var game in Model.Games)
+    {
+        <tr>
+            <td>
+                    <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="AdminPanel" asp-action="GetDescription" asp-route-gameName="@Model.GameName">
+                        @game
+                    </a>
+            </td>
+        </tr>
+    }
+</table>
+    }
+

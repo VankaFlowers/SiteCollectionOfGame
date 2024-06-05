@@ -9,15 +9,13 @@ namespace MySite.Services.ServicesForHome
 {
     public class HomeService : IHomeService
     {
-
-
-
-
         public string Logging(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, Log log)
         {
             var alreadyExist = _dbContext.Persons   //проверка пользователя
             .Where(p => (p.LoginName == log.Email && p.Password == log.Password) ? true : false)
             .FirstOrDefault();
+
+            
 
             if (alreadyExist == null) //логика если неправильно
             {
@@ -25,7 +23,18 @@ namespace MySite.Services.ServicesForHome
             }
             else  //если правильно
             {
-                var claims = new List<Claim> { new Claim(ClaimTypes.Name, alreadyExist.LoginName) };
+                if (alreadyExist.Role == null) //временно,чтобы существующим проставить роли
+                {
+                    alreadyExist.Role = "user";
+                    _dbContext.SaveChanges();
+                }
+
+                var claims = new List<Claim> 
+                { 
+                    new Claim(ClaimTypes.Name, alreadyExist.LoginName),
+
+                    new Claim(ClaimTypes.Role, alreadyExist.Role)
+                };
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
                 // установка аутентификационных куки
@@ -45,7 +54,8 @@ namespace MySite.Services.ServicesForHome
                 var login = new Person()
                 {
                     LoginName = log.Email,
-                    Password = log.Password
+                    Password = log.Password,
+                    Role = "user"
                 };
                 _dbContext.Add(login);
                 _dbContext.SaveChanges();

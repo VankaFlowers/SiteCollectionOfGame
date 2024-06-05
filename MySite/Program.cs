@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySite.Entities;
 using MySite.Services;
@@ -26,6 +27,8 @@ namespace MySite
 
             builder.Services.AddDbContext<DbVideoGamesContext>(options
                 => options.UseNpgsql("Server=localhost; DataBase=db_video_games; User Id=postgres;password = 1234"));
+
+            
 
             builder.Services.AddHttpContextAccessor();
 

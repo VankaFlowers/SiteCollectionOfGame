@@ -57,11 +57,13 @@ namespace MySite.Services.ServicesForLibrary
 
             _dbContext.SaveChanges();
         }
+
+
         public GameDescriptionModel ShowDescriptionGame(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, string gameName)
         {
-            var claimsOfUser = _httpContextAccessor.HttpContext.User;
+            //var claimsOfUser = _httpContextAccessor.HttpContext.User;
 
-            var nameOfPerson = claimsOfUser.Identity.Name;
+            //var nameOfPerson = claimsOfUser.Identity.Name;
 
             var genre = _dbContext.Games
                 .Include(g=>g.Genre)

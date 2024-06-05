@@ -40,8 +40,13 @@ namespace MySite.Controllers
                 var service = _serviceProvider.GetService<IHomeService>();
 
                 var nameOfView = service.Logging(_dbContext, _httpContextAccessor, log);
+               
+                if( User.IsInRole("admin"))
+                {
+                    return RedirectToAction("Index", "AdminPanel");
+                }
 
-                 return View(nameOfView);                
+                return View(nameOfView);                
             }
             return View("Index");
         }

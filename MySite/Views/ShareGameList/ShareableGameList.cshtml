@@ -1,0 +1,21 @@
+﻿@using MySite.Entities
+@model UserGameList
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Shared Game List</title>
+    <link href="~/css/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Game List @Model.Person.LoginName</h1>
+    <ul>
+        @foreach (var game in Model.Games)
+        {
+            <li>@game.GameName </li>
+        }
+    </ul>
+    <script src="~/css/assets/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

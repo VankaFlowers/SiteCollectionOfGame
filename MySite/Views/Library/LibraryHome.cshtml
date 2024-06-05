@@ -238,8 +238,46 @@
 			});
 		}
 	</script>
-	<div class="b-example-divider"></div>
+	<div class="b-example-divider" ></div>
+	<button id="createLinkButton" class="btn btn-primary">Create Shareable Link</button>
 
+	<div id="shareableLink" style="margin-top: 10px;"></div>
+
+	<script>
+		$(document).ready(function () {
+			$('#createLinkButton').click(function () {
+				createShareableLink();
+			});
+		});
+
+		function createShareableLink() {
+			var gamesOfUsers = [];
+			$('.comment').each(function () {
+				var commentId = $(this).data('id');
+				var commentText = $(this).val();
+				var game = $(this).closest('tr').find('.link-body-emphasis').text().trim();
+
+				gamesOfUsers.push({
+					CommentId: commentId,
+					Comment: commentText,
+					Game: game
+				});
+			});
+
+			$.ajax({
+				url: '@Url.Action("CreateLink", "ShareGameList")',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({ GamesOfUsers: gamesOfUsers }),
+				success: function (response) {
+					$('#shareableLink').html('<a href="' + response.link + '">' + response.link + '</a>');
+				},
+				error: function (xhr, status, error) {
+					console.error('Failed to create shareable link');
+				}
+			});
+		}
+	</script>
 
 	<script src="~/css/assets/dist/js/bootstrap.bundle.min.js"></script>
 

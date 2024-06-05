@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MySite.Entities;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MySite.Migrations
 {
     [DbContext(typeof(DbVideoGamesContext))]
-    partial class DbVideoGamesContextModelSnapshot : ModelSnapshot
+    [Migration("20240603154309_AnotherDrop")]
+    partial class AnotherDrop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,16 +58,11 @@ namespace MySite.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("UserGameListId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("GameId");
 
                     b.HasIndex("PersonId");
-
-                    b.HasIndex("UserGameListId");
 
                     b.ToTable("game_comments", "video_games");
                 });
@@ -89,15 +87,10 @@ namespace MySite.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("genre_id");
 
-                    b.Property<int?>("UserGameListId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id")
                         .HasName("pk_game");
 
                     b.HasIndex("GenreId");
-
-                    b.HasIndex("UserGameListId");
 
                     b.ToTable("game", "video_games");
                 });
@@ -201,9 +194,6 @@ namespace MySite.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("text");
-
                     b.HasKey("Id")
                         .HasName("pk_person");
 
@@ -300,30 +290,6 @@ namespace MySite.Migrations
                     b.ToTable("region_sales", "video_games");
                 });
 
-            modelBuilder.Entity("MySite.Entities.UserGameList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Game")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("PersonId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("ShareableLink")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("user_game_list", "video_games");
-                });
-
             modelBuilder.Entity("GamePerson", b =>
                 {
                     b.HasOne("MySite.Entities.Game", null)
@@ -353,10 +319,6 @@ namespace MySite.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MySite.Entities.UserGameList", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("UserGameListId");
-
                     b.Navigation("Game");
 
                     b.Navigation("Person");
@@ -368,10 +330,6 @@ namespace MySite.Migrations
                         .WithMany("Games")
                         .HasForeignKey("GenreId")
                         .HasConstraintName("fk_gm_gen");
-
-                    b.HasOne("MySite.Entities.UserGameList", null)
-                        .WithMany("Games")
-                        .HasForeignKey("UserGameListId");
 
                     b.Navigation("Genre");
                 });
@@ -427,15 +385,6 @@ namespace MySite.Migrations
                     b.Navigation("Region");
                 });
 
-            modelBuilder.Entity("MySite.Entities.UserGameList", b =>
-                {
-                    b.HasOne("MySite.Entities.Person", "Person")
-                        .WithMany("GameLists")
-                        .HasForeignKey("PersonId");
-
-                    b.Navigation("Person");
-                });
-
             modelBuilder.Entity("MySite.Entities.Game", b =>
                 {
                     b.Navigation("Comments");
@@ -456,8 +405,6 @@ namespace MySite.Migrations
             modelBuilder.Entity("MySite.Entities.Person", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("GameLists");
                 });
 
             modelBuilder.Entity("MySite.Entities.Platform", b =>
@@ -468,13 +415,6 @@ namespace MySite.Migrations
             modelBuilder.Entity("MySite.Entities.Publisher", b =>
                 {
                     b.Navigation("GamePublishers");
-                });
-
-            modelBuilder.Entity("MySite.Entities.UserGameList", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("Games");
                 });
 #pragma warning restore 612, 618
         }
