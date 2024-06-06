@@ -1,0 +1,12 @@
+﻿@{Layout = null;}
+
+@model CreatingNewGenreModel
+
+<form asp-action="CreateNewGenre" asp-controller="AdminPanel">
+    <div class="form-group">
+        <label asp-for="GenreName"></label>
+        <input asp-for="GenreName" class="form-control" />
+        <span asp-validation-for="GenreName" class="text-danger"></span>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>

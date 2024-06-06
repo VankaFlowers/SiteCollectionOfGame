@@ -32,15 +32,14 @@ namespace MySite.Controllers
             return View();
         }
         
-        [HttpPost]
         public IActionResult Logging(Log log)
         {
             if (ModelState.IsValid)
             {
                 var service = _serviceProvider.GetService<IHomeService>();
 
-                var nameOfView = service.Logging(_dbContext, _httpContextAccessor, log);
-               
+                var nameOfView = service.Logging(_dbContext, _httpContextAccessor, log);             
+
                 if( User.IsInRole("admin"))
                 {
                     return RedirectToAction("Index", "AdminPanel");

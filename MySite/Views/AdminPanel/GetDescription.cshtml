@@ -1,48 +1,64 @@
 ﻿@{
-    Layout = null;
+	Layout = null;
 }
 
 
 @model AdminEditModel
 
-
+@await Html.PartialAsync("Index")
 
 
 <main class="container mt-5">
-    <h1>@Model.GameName</h1>
-    <h2>Genre: @Model.GenreName</h2>
-    <ul class="list-group">
-        @foreach (var publisher in Model.GameDescription.GamePublishers)
-        {
-            <li class="list-group-item">
-                <h3>Publisher: @publisher.Publisher.PublisherName</h3>
-                <ul class="list-group">
-                    @foreach (var gamePlatform in publisher.GamePlatforms)
-                    {
-                        <li class="list-group-item">
-                            <h4>Platform: @gamePlatform.Platform.PlatformName</h4>
-                            <h5>Release Year: @gamePlatform.ReleaseYear</h5>
-                            <table class="table table-striped mt-2">
-                                <thead>
-                                    <tr>
-                                        <th>Sales(mln)</th>
-                                        <th>Region</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var regionsale in Model.GameDescription.RegionSales.Where(e => e.GamePlatformId == gamePlatform.Id))
-                                    {
-                                        <tr>
-                                            <td>@regionsale.NumSales</td>
-                                            <td>@regionsale.Region.RegionName</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </li>
-                    }
-                </ul>
-            </li>
-        }
-    </ul>
+	<h1>
+		<p>
+			Name: @Model.GameName Id: @Model.GameDescription.GameId
+		</p>
+	</h1>
+	@await Html.PartialAsync("_EditGameName", new EditingGameNameModel() { CurrentGameName = Model.GameName, GameId = Model.GameDescription.GameId })
+	@if(Model.StatusModel!= null && Model.StatusModel.GameStatus!=null)
+	{
+		@Model.StatusModel.GameStatus
+	}
+	<h2>Genre: @Model.GameDescription.GenreName</h2>
+	@await Html.PartialAsync("_EditGenreName", new EditingGenreNameModel() { CurrentGenreName = Model.GenreName, GameId = Model.GameDescription.GameId })
+	@if (Model.StatusModel != null && Model.StatusModel.GenreStatus != null)
+	{
+		@Model.StatusModel.GenreStatus
+	}
+	<ul class="list-group">
+		@foreach (var publisher in Model.GameDescription.GamePublishers)
+		{
+			<li class="list-group-item">
+				<h3>Publisher: @publisher.Publisher.PublisherName</h3>
+				<ul class="list-group">
+					@foreach (var gamePlatform in publisher.GamePlatforms)
+					{
+						<li class="list-group-item">
+							<h4>Platform: @gamePlatform.Platform.PlatformName</h4>
+							<h5>Release Year: @gamePlatform.ReleaseYear</h5>
+							<table class="table table-striped mt-2">
+								<thead>
+									<tr>
+										<th>Sales(mln)</th>
+										<th>Region</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var regionsale in Model.GameDescription.RegionSales.Where(e => e.GamePlatformId == gamePlatform.Id))
+									{
+										<tr>
+											<td>@regionsale.NumSales</td>
+											<td>@regionsale.Region.RegionName</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</li>
+					}
+				</ul>
+			</li>
+		}
+	</ul>
 </main>
+
+

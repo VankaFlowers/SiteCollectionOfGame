@@ -31,17 +31,27 @@ namespace MySite.Controllers
                     .Persons
                     .FirstOrDefault(g => g.LoginName == userName);
 
-                var gameList = new UserGameList()
-                {
-                    Person = user,                   
-                    Games = _dbContext
-                    .Games
-                    .Where(g => model.GamesOfUsers.Select(m=> m.Game).ToList().Contains(g.GameName)).ToList(),  //переделать,чтобы не выгружалось в память,а проверялось сразу в базе
-                    ShareableLink = Guid.NewGuid()
-                };
+                UserGameList? gameList;
 
-                _dbContext.UserGamesList.Add(gameList);
-				_dbContext.SaveChanges();
+                if (user.GameLists.Any(gl => gl.Game == "Library"))
+                {
+                     gameList = user.GameLists.FirstOrDefault(gl => gl.Game == "Library");
+                }
+                else
+                {
+                     gameList = new UserGameList()
+                    {
+                        Person = user,
+                        Games = _dbContext
+                        .Games
+                        .Where(g => model.GamesOfUsers.Select(m => m.Game).ToList().Contains(g.GameName)).ToList(),  //переделать,чтобы не выгружалось в память,а проверялось сразу в базе
+                        ShareableLink = Guid.NewGuid(),
+                        Game = "Library"
+                    };
+                    _dbContext.UserGamesList.Add(gameList);
+                    _dbContext.SaveChanges();
+                }
+
 
 				var shareableLink = Url.Action("ShareableGameList", "ShareGameList", new { link = gameList.ShareableLink }, protocol: HttpContext.Request.Scheme);
 				

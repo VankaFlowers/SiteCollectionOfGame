@@ -1,0 +1,11 @@
+﻿@{Layout = null;}
+@model EditingGameNameModel
+
+
+<form asp-action="EditGameName" asp-controller="AdminPanel" asp-route-CurrentGameName="@Model.CurrentGameName" asp-route-GameId="@Model.GameId">
+    <div class="form-group">
+        <label asp-for="NewGameName"></label>
+        <input asp-for="NewGameName" class="form-control" value="@Model.CurrentGameName" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

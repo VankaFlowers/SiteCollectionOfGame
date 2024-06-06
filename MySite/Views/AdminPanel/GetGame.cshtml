@@ -8,6 +8,8 @@
     ViewData["Title"] = "Find Game";
 }
 
+@await Html.PartialAsync("Index")
+
 <h2>Find Game</h2>
 
 <form asp-action="GetGame" method="post">
@@ -27,8 +29,8 @@
     {
         <tr>
             <td>
-                    <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="AdminPanel" asp-action="GetDescription" asp-route-gameName="@Model.GameName">
-                        @game
+                    <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="AdminPanel" asp-action="GetDescription" asp-route-gameName="@game">
+                       @game
                     </a>
             </td>
         </tr>

@@ -65,6 +65,8 @@ namespace MySite.Services.ServicesForLibrary
 
             //var nameOfPerson = claimsOfUser.Identity.Name;
 
+            var game = _dbContext.Games.FirstOrDefault(g => g.GameName == gameName);
+
             var genre = _dbContext.Games
                 .Include(g=>g.Genre)
                  .FirstOrDefault(g => g.GameName == gameName)
@@ -104,6 +106,7 @@ namespace MySite.Services.ServicesForLibrary
             var descriptionGame = new GameDescriptionModel()
             {
                 GameName = gameName,
+                GameId = game.Id,
                 GenreName = genre,
                 GamePublishers = gamePublishers.ToList(),
                 RegionSales = sales.ToList()

@@ -1,0 +1,28 @@
+﻿@model CreatingStatusModel
+@{
+	Layout = null;
+}
+
+
+@await Html.PartialAsync("Index")
+
+<h2>Create </h2>
+
+
+
+@await Html.PartialAsync("_CreateGame",new CreatingNewGameModel())
+@if (Model!=null && Model.GameStatus != null)
+{
+	<p>
+		@Model.GameStatus
+	</p>
+}
+
+@await Html.PartialAsync("_CreateGenre", new CreatingNewGenreModel())
+@if (Model != null && Model.GenreStatus != null)
+{
+	<p>
+		@Model.GenreStatus
+	</p>
+}
+

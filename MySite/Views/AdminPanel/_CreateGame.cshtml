@@ -1,0 +1,14 @@
+﻿@{
+    Layout = null;
+ }
+@model CreatingNewGameModel
+
+
+<form asp-action="CreateGame" asp-controller="AdminPanel" method="post">
+    <div class="form-group">
+        <label asp-for="GameName"></label>
+        <input asp-for="GameName" class="form-control" />
+        <span asp-validation-for="GameName" class="text-danger"></span>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>
