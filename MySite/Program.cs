@@ -7,6 +7,7 @@ using MySite.Services.ServicesForEditing;
 using MySite.Services.ServicesForHome;
 using MySite.Services.ServicesForLibrary;
 using MySite.Services.ServicesForSelection;
+using System.Configuration;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MySite
@@ -28,14 +29,18 @@ namespace MySite
             builder.Services.AddDbContext<DbVideoGamesContext>(options
                 => options.UseNpgsql("Server=localhost; DataBase=db_video_games; User Id=postgres;password = 1234"));
 
-            
-
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddTransient<IAddingGameService, AddingGame>();
+
             builder.Services.AddTransient<ILibraryService, LibraryService>();
+
             builder.Services.AddTransient<IHomeService, HomeService>();
+
             builder.Services.AddTransient<IEditingService,EditingService>();
+
+            builder.Services.AddTransient<IEmailService, EmailService>();
+            
 
             var app = builder.Build();
 

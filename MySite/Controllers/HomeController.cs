@@ -10,6 +10,8 @@ using MySite.Entities;
 using System;
 using Microsoft.AspNetCore.Http;
 using MySite.Services;
+using System.Net.Mail;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MySite.Controllers
 {
@@ -17,38 +19,50 @@ namespace MySite.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly DbVideoGamesContext _dbContext;
-		private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IServiceProvider _serviceProvider;
         public HomeController(ILogger<HomeController> logger, DbVideoGamesContext context, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _dbContext = context;
-			_httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
             _serviceProvider = serviceProvider;
-		}
+        }
 
         public IActionResult Index()
         {
             return View();
         }
-        
-        public IActionResult Logging(Log log)
+
+
+        public async Task<IActionResult> Logging(Log log)
         {
             if (ModelState.IsValid)
             {
                 var service = _serviceProvider.GetService<IHomeService>();
 
-                var nameOfView = service.Logging(_dbContext, _httpContextAccessor, log);             
+                var nameOfView = service.Logging(_dbContext, _httpContextAccessor, log, _serviceProvider);
 
-                if( User.IsInRole("admin"))
+                if (User.IsInRole("admin"))
                 {
                     return RedirectToAction("Index", "AdminPanel");
                 }
-
-                return View(nameOfView);                
+                TempData["logEmail"] = log.Email;
+                TempData["password"] = log.Password;
+                return View(await nameOfView);
             }
             return View("Index");
         }
+
+        public async Task<IActionResult> VerifyCode(Log log)
+        {
+                var service = _serviceProvider.GetService<IHomeService>();
+                
+                var nameOfView = service.VerifyCode(_dbContext,_httpContextAccessor, log);
+
+                return View(await nameOfView);         
+        }
+
         [HttpPost]
         public IActionResult Registring(Log log)
         {
@@ -68,5 +82,6 @@ namespace MySite.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+       
     }
 }

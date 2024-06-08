@@ -12,8 +12,6 @@ namespace MySite.Controllers
 	[Authorize(Roles = "admin")]
 	public class AdminPanelController : Controller
 	{
-
-
 		private readonly DbVideoGamesContext _dbContext;
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IServiceProvider _serviceProvider;

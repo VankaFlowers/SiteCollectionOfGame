@@ -11,6 +11,8 @@ namespace MySite.Entities
         public string? Password { get; set; }
 
         public string? Role { get; set; }
+        public string? Enable2FA { get; set; }
+        public string? Code2FA {  get; set; }
 
         public ICollection<Game>? Games{ get; set; }
 

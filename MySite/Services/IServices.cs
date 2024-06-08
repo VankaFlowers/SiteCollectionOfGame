@@ -24,10 +24,16 @@ namespace MySite.Services
     interface IHomeService
     {
         string Registring(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, Log log);
-        string Logging(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, Log log);
+        Task<string> Logging(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, Log log, IServiceProvider serviceProvider);
+        Task SettingAuthCookies(Person? alreadyExist, IHttpContextAccessor _httpContextAccessor);
+        Task<string> VerifyCode(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, Log log);
     }
     interface IEditingService
     {
         void EditComment(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GameOfUser game);
+    }
+    public interface IEmailService
+    {
+        Task SendEmailAsync(string to, string subject, string body);
     }
 }
