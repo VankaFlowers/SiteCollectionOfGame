@@ -6,106 +6,126 @@ using MySite.Models;
 
 namespace MySite.Services.ServicesForSelection
 {
-	public class AddingGame : IAddingGameService
+    public class AddingGame : IAddingGameService
     {
-		  public string AlreadyThere(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext)
-		{
-			
-			//var comment = new Comment() { Text = game.Comment };
-			//user.Comments = new List<Comment>() { comment };
-			//_dbContext.SaveChanges();
-			return "SuccessGameSelection";
-		}
-		 public string RegularAdding(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext, Game? existGame)
-		{
-			user.Games.Add(existGame);
+        public string AlreadyThere(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext)
+        {
 
-			var comment = new Comment() { Text = string.Empty, Game = existGame, Person = user };
+            //var comment = new Comment() { Text = game.Comment };
+            //user.Comments = new List<Comment>() { comment };
+            //_dbContext.SaveChanges();
+            return "Game already added";
+        }
+        public string RegularAdding(Person? user, GameOfPerson game, DbVideoGamesContext _dbContext, Game? existGame) //если игры уже есть
+        {
+            user.Games.Add(existGame);
 
-			if (game.Comment != null)
-			{
-				comment.Text = game.Comment;
-			}
+            var comment = new Comment() { Text = string.Empty, Game = existGame, Person = user };
 
-			user.Comments.Add(comment);
+            if (game.Comment != null)
+            {
+                comment.Text = game.Comment;
+            }
+            var userLibList = user.GameLists.FirstOrDefault(gl => gl.NameOfList == "Library");
 
-			_dbContext.SaveChanges();
-			return "SuccessGameSelection";
-		}
-		 public string FirstInit(Person? user,Game existGame, GameOfPerson game, DbVideoGamesContext _dbContext)
-		{
-			user.Games = new List<Game>() { existGame };    //если игр еще не было,для инициалазции                            
+            userLibList.Games.Add(existGame);
 
-			user.Comments = new List<Comment>();
+            user.Comments.Add(comment);
 
-			var comment = new Comment() { Text = string.Empty, Game = existGame, Person = user };
+            _dbContext.SaveChanges();
+            return "Successfully added";
+        }
+        public string FirstInit(Person? user, Game existGame, GameOfPerson game, DbVideoGamesContext _dbContext) //первая инициализация списков
+        {
+            user.Games = new List<Game>() { existGame };    //если игр еще не было,для инициалазции                            
 
-			if (game.Comment != null)
-			{
-				comment.Text = game.Comment;
-			}
+            user.Comments = new List<Comment>();
 
-			user.Comments.Add(comment);
+            var userLibList = new UserGameList()
+            {
+                NameOfList = "Library",
+                Person = user,
+                Games = new List<Game>() 
+                { 
+                    existGame 
+                }
+            };
 
-			_dbContext.SaveChanges();
+            user.GameLists = new List<UserGameList>() 
+            { 
+                userLibList 
+            };
 
-			return "SuccessGameSelection";
-		}
-		   public string AddingTheGame(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GameOfPerson game)	//общий метод
-		{
+            var comment = new Comment() { Text = string.Empty, Game = existGame, Person = user };
 
-			var userContext = _httpContextAccessor.HttpContext.User;
+            if (game.Comment != null)
+            {
+                comment.Text = game.Comment;
+            }
 
-			var nameOfPerson = userContext.Identity.Name; 
+            user.Comments.Add(comment);
 
-			var existGame = _dbContext.Games
-					.Where(g => g.GameName == game.NameOfGame)
-					.FirstOrDefault();
+            _dbContext.SaveChanges();
 
-			if (existGame == null)	//нет такой игры
-			{
-				return "FailedGameSelection";
-			}
-			var user = _dbContext
-			.Persons
-			?.Include(e => e.Games)
-			.ThenInclude(e => e.Comments)
-			.Include(e => e.Comments)
-			.First(p => p.LoginName == nameOfPerson);
+            return "Successfully added";
+        }
+        public string AddingTheGame(DbVideoGamesContext _dbContext, IHttpContextAccessor _httpContextAccessor, GameOfPerson game)   //общий метод
+        {
 
-			var alreadyAddedGames = user.Games;    
+            var userContext = _httpContextAccessor.HttpContext.User;
 
-			if (alreadyAddedGames == null)	//первый раз добавление
-			{
-				return FirstInit(user, existGame, game, _dbContext);
-				
-			}
-			else if (alreadyAddedGames.Contains(existGame))    //если игра уже в списке пользователя
-			{				
-				return AlreadyThere(user,game,_dbContext);
-			}
-			else
-			{
-				return RegularAdding(user, game, _dbContext,existGame);
-			}
-		}
-		//public GameOfPerson GetGames(DbVideoGamesContext _dbContext,GameOfPerson game)
-		//{
-		//	var name = game.NameOfGame;			
+            var nameOfPerson = userContext.Identity.Name;
 
-  //          var games = _dbContext
-		//		.Games
-		//		.Where(g => g.GameName.ToLower()
-  //                            .Contains(name.ToLower()))
-		//		.Take(8)
-		//		.Select(g => new {id = g.Id, text =g.GameName})
-		//		.ToList();
+            var existGame = _dbContext.Games
+                    .Where(g => g.GameName == game.NameOfGame)
+                    .FirstOrDefault();
 
-		//	var model = new GameOfPerson 
-		//	{ 
-		//		Games = new SelectList(games, "Value", "Text")
-		//	};
-		//	return model;
-		//}
-	}
+            if (existGame == null)  //нет такой игры
+            {
+                return "Such game not exist";
+            }
+            var user = _dbContext
+            .Persons
+            ?.Include(e => e.Games)
+            .ThenInclude(e => e.Comments)
+            .Include(e => e.Comments)
+            .Include(e => e.GameLists)
+            .ThenInclude(gl => gl.Games)
+            .First(p => p.LoginName == nameOfPerson);
+
+            var alreadyAddedGames = user.Games;
+
+            if (alreadyAddedGames.Count == 0)  //первый раз добавление
+            {
+                return FirstInit(user, existGame, game, _dbContext);
+
+            }
+            else if (alreadyAddedGames.Contains(existGame))    //если игра уже в списке пользователя
+            {
+                return AlreadyThere(user, game, _dbContext);
+            }
+            else
+            {
+                return RegularAdding(user, game, _dbContext, existGame);
+            }
+        }
+        //public GameOfPerson GetGames(DbVideoGamesContext _dbContext,GameOfPerson game)
+        //{
+        //	var name = game.NameOfGame;			
+
+        //          var games = _dbContext
+        //		.Games
+        //		.Where(g => g.GameName.ToLower()
+        //                            .Contains(name.ToLower()))
+        //		.Take(8)
+        //		.Select(g => new {id = g.Id, text =g.GameName})
+        //		.ToList();
+
+        //	var model = new GameOfPerson 
+        //	{ 
+        //		Games = new SelectList(games, "Value", "Text")
+        //	};
+        //	return model;
+        //}
+    }
 }

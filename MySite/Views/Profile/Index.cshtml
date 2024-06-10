@@ -1,0 +1,23 @@
+﻿@model EditingPasswordForUserModel
+<a asp-controller="Profile" asp-action="LogOut" style="position: top: 10px; left: 10px;">
+	Log out
+</a>
+
+<main class="edit-password">
+	<form class="form-login" method="post" asp-contoller="Profile" asp-action="EditPassword" style="max-width: 400px; margin: auto;">
+		
+		<h1 class="h3 mb-3 fw-normal">Edit password</h1>
+		<p>
+			@TempData["status"]
+		</p>
+		<div class="form-floating">
+			<input asp-for="OldPassword" class="form-control" type="password">
+			<label asp-for="OldPassword">Current password</label>
+		</div>
+		<div class="form-floating">
+			<input asp-for="NewPassword" class="form-control" type="password">
+			<label asp-for="NewPassword">New password</label>
+		</div>
+		<button class="btn btn-primary w-100 py-2" type="submit">Submit</button>
+	</form>
+</main>

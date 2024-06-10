@@ -45,17 +45,20 @@ namespace MySite.Controllers
 				{
 					var nameOfPerson = User.Identity.Name; 
 
-					var service = _serviceProvider.GetService<IAddingGameService>();
+					var service = _serviceProvider.GetRequiredService<IAddingGameService>();
 
-					var nameOfView = service.AddingTheGame(_dbContext, _httpContextAccessor, game);          
+					var status = service.AddingTheGame(_dbContext, _httpContextAccessor, game);
 
-                    return View(nameOfView);
+					TempData["addingStatus"] = status;
+
+                    return View("GameSelection");
 				}
 				else return View("Index");  //если нет куки
 
 			}
+			TempData["addingStatus"] = "Something went wrong";
 
-			return View("FailedGameSelection");
+            return View("GameSelection");
 		}
 		public IActionResult SearchGames(string term)
 		{

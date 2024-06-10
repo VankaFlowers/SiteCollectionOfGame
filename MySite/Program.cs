@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySite.Entities;
 using MySite.Services;
+using MySite.Services.ServiceForProfile;
 using MySite.Services.ServicesForEditing;
 using MySite.Services.ServicesForHome;
 using MySite.Services.ServicesForLibrary;
@@ -40,6 +41,8 @@ namespace MySite
             builder.Services.AddTransient<IEditingService,EditingService>();
 
             builder.Services.AddTransient<IEmailService, EmailService>();
+
+            builder.Services.AddTransient<ILogOutService, LogOutService>();
             
 
             var app = builder.Build();

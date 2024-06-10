@@ -29,33 +29,23 @@ namespace MySite.Controllers
                 
                 var user = _dbContext
                     .Persons
+                    ?.Include(e => e.GameLists)
+                    ?.ThenInclude(e => e.Games)
                     .FirstOrDefault(g => g.LoginName == userName);
 
-                UserGameList? gameList;
+                var userLibList = user.GameLists.FirstOrDefault(gl => gl.NameOfList == "Library");
 
-                if (user.GameLists.Any(gl => gl.Game == "Library"))
-                {
-                     gameList = user.GameLists.FirstOrDefault(gl => gl.Game == "Library");
+                string? shareableLink;
+
+                if (userLibList != null )
+                { 
+                    
+                    shareableLink = Url.Action("ShareableGameList", "ShareGameList", new { link = userLibList.ShareableLink }, protocol: HttpContext.Request.Scheme);
                 }
                 else
                 {
-                     gameList = new UserGameList()
-                    {
-                        Person = user,
-                        Games = _dbContext
-                        .Games
-                        .Where(g => model.GamesOfUsers.Select(m => m.Game).ToList().Contains(g.GameName)).ToList(),  //переделать,чтобы не выгружалось в память,а проверялось сразу в базе
-                        ShareableLink = Guid.NewGuid(),
-                        Game = "Library"
-                    };
-                    _dbContext.UserGamesList.Add(gameList);
-                    _dbContext.SaveChanges();
+                    shareableLink = "No game in your library";
                 }
-
-
-				var shareableLink = Url.Action("ShareableGameList", "ShareGameList", new { link = gameList.ShareableLink }, protocol: HttpContext.Request.Scheme);
-				
-
 				return Json(new {link = shareableLink});
 			}
             return BadRequest(ModelState);
